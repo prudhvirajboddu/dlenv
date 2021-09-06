@@ -37,11 +37,11 @@ RUN conda create -y -n ml python=3.8
 
 # COPY . /
 
-RUN /bin/zsh -c "source activate ml"
+RUN /bin/zsh -c "source activate ml && pip install tensorflow==2.5 && conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia "
 
-RUN /bin/zsh -c "pip install tensorflow==2.5"
+# RUN /bin/zsh -c ""
 
-RUN /bin/zsh -c "conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia"
+# RUN /bin/zsh -c "conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia"
 
 # RUN curl -fsSL https://code-server.dev/install.sh | sh
 # RUN mkdir -p /root/.code-server/extensions
