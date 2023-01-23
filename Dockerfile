@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.2.0-cudnn8-devel-ubuntu18.04
+FROM nvidia/cuda:11.7.0-cudnn8-devel-ubuntu18.04
 ENV PATH="/root/miniconda3/bin:${PATH}"
 ARG PATH="/root/miniconda3/bin:${PATH}"
 
@@ -31,13 +31,13 @@ RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -
 RUN wget \
     https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     && mkdir /root/.conda \
-    && sh Miniconda3-latest-Linux-x86_64.sh -b \
-    && rm -f Miniconda3-latest-Linux-x86_64.sh 
-RUN conda create -y -n ml python=3.8
+    && sh Miniconda3-latest-Linux-x86_64.sh -b
+    
+RUN conda create -y -n ml python=3.9
 
-# COPY . /
+RUN /bin/zsh -c "source activate ml && pip install tensorflow==2.10 && conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia"
 
-RUN /bin/zsh -c "source activate ml && pip install tensorflow==2.5 && conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia "
+RUN rm -f Miniconda3-latest-Linux-x86_64.sh
 
 # RUN /bin/zsh -c ""
 
