@@ -1,6 +1,9 @@
 FROM nvidia/cuda:11.7.0-cudnn8-devel-ubuntu18.04
 ENV PATH="/root/miniconda3/bin:${PATH}"
 ARG PATH="/root/miniconda3/bin:${PATH}"
+ENV SHELL /bin/zsh
+ENV LANG=en_US.UTF-8
+ENV ZSH_THEME agnoster
 
 RUN apt-get update
 RUN apt-get install -y \
@@ -19,25 +22,28 @@ RUN apt-get install -y \
     zsh \
     && rm -rf /var/lib/apt/lists/*
 
-ENV ZSH_THEME agnoster
+
 RUN locale-gen en_US.UTF-8
 RUN /bin/sh -c chsh -s /bin/zsh
 
-ENV SHELL /bin/zsh
-ENV LANG=en_US.UTF-8
-
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
 
-RUN wget \
-    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-    && mkdir /root/.conda \
-    && sh Miniconda3-latest-Linux-x86_64.sh -b
+# Install miniconda
+ENV CONDA_DIR /opt/conda
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+     /bin/bash ~/miniconda.sh -b -p /opt/conda
+
+# Put conda in path so we can use conda activate
+ENV PATH=$CONDA_DIR/bin:$PATH
+    
+RUN conda --version
+
+RUN rm -f miniconda.sh
     
 RUN conda create -y -n ml python=3.9
 
 RUN /bin/zsh -c "source activate ml && pip install tensorflow==2.10 && conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia"
 
-RUN rm -f Miniconda3-latest-Linux-x86_64.sh
 
 # RUN /bin/zsh -c ""
 
